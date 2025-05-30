@@ -1,4 +1,3 @@
-
 import { formatCurrency } from '../utils/formatters';
 
 const OrderSummary = ({ orderSummary, product, variant, quantity, showFull = false }) => {
@@ -7,12 +6,12 @@ const OrderSummary = ({ orderSummary, product, variant, quantity, showFull = fal
   return (
     <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
       <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
-      
+
       <div className="flex items-start mb-4">
-        <img 
-          src={product.image} 
-          alt={product.name} 
-          className="w-16 h-16 object-cover rounded-md mr-4" 
+        <img
+          src={product.image}
+          alt={product.name}
+          className="w-16 h-16 object-cover rounded-md mr-4"
         />
         <div>
           <h3 className="font-medium">{product.name}</h3>
