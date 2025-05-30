@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar';
@@ -11,6 +10,7 @@ import ThankYouPage from './pages/ThankYouPage';
 import LoginPage from './pages/LoginPage';
 
 function App() {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   return (
     <BrowserRouter>
       <CartProvider>
@@ -18,10 +18,10 @@ function App() {
           <Navbar />
           <main className="flex-grow">
             <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/products/:id" element={<ProductPage />} />
+              <Route path="/" element={<LandingPage backendUrl={backendUrl} />} />
+              <Route path="/products/:id" element={<ProductPage backendUrl={backendUrl} />} />
               <Route path="/cart" element={<CartPage />} />
-              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/checkout" element={<CheckoutPage backendUrl={backendUrl} />} />
               <Route path="/thank-you" element={<ThankYouPage />} />
               <Route path="/login" element={<LoginPage />} />
             </Routes>
