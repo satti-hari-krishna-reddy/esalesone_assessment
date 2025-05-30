@@ -1,18 +1,16 @@
-import React from 'react';
-
-const FormField = ({ 
-  label, 
-  id, 
-  type = 'text', 
-  value, 
-  onChange, 
-  placeholder, 
-  error, 
+const FormField = ({
+  label,
+  id,
+  type = 'text',
+  value,
+  onChange,
+  placeholder,
+  error,
   required = false,
   pattern,
   maxLength,
   minLength,
-  className = ''
+  className = '',
 }) => {
   return (
     <div className={`mb-4 ${className}`}>
