@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
   orderNumber: { type: String, required: true, unique: true },
-  
+
   customerInfo: {
     fullName: { type: String, required: true },
     email: { type: String, required: true },
@@ -10,7 +10,7 @@ const orderSchema = new mongoose.Schema({
     address: { type: String, required: true },
     city: { type: String, required: true },
     state: { type: String, required: true },
-    zipCode: { type: String, required: true }
+    zipCode: { type: String, required: true },
   },
 
   items: [
@@ -19,18 +19,18 @@ const orderSchema = new mongoose.Schema({
       name: String,
       variant: String,
       quantity: Number,
-      price: Number
-    }
+      price: Number,
+    },
   ],
 
   totalAmount: { type: Number, required: true },
   status: {
     type: String,
     enum: ['Approved', 'Declined', 'Gateway Error'],
-    default: 'Approved'
+    default: 'Approved',
   },
 
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
 });
 
 module.exports = mongoose.model('Order', orderSchema);
