@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Minus, Plus, ShoppingBag, ShoppingCart } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { getProductById } from '../mocks/productData';
 import { formatCurrency } from '../utils/formatters';
 
-const ProductPage = () => {
+const ProductPage = ({ backendUrl }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
@@ -17,7 +16,10 @@ const ProductPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const data = await getProductById(parseInt(id));
+        const res = await fetch(`${backendUrl}/api/v1/products/${id}`);
+        if (!res.ok) throw new Error('Product not found');
+
+        const data = await res.json();
         setProduct(data);
         setSelectedVariant(data.variants[0]);
         setLoading(false);
@@ -41,7 +43,7 @@ const ProductPage = () => {
   };
 
   const handleBuyNow = () => {
-   handleAddToCart();
+    handleAddToCart();
     navigate('/checkout');
   };
 
@@ -64,10 +66,10 @@ const ProductPage = () => {
           {/* Product Image */}
           <div className="lg:w-1/2 mb-8 lg:mb-0">
             <div className="bg-white rounded-lg overflow-hidden shadow-md">
-              <img 
-                src={product.image} 
-                alt={product.name} 
-                className="w-full h-auto object-cover transition-transform duration-300 hover:scale-105" 
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-auto object-cover transition-transform duration-300 hover:scale-105"
               />
             </div>
           </div>
@@ -102,9 +104,11 @@ const ProductPage = () => {
                     onClick={() => setSelectedVariant(variant)}
                     className={`
                       px-4 py-2 border rounded-md transition-all duration-200
-                      ${selectedVariant.id === variant.id 
-                        ? 'border-blue-500 bg-blue-50 text-blue-700' 
-                        : 'border-gray-300 text-gray-700 hover:border-gray-400'}
+                      ${
+                        selectedVariant.id === variant.id
+                          ? 'border-blue-500 bg-blue-50 text-blue-700'
+                          : 'border-gray-300 text-gray-700 hover:border-gray-400'
+                      }
                       ${!variant.inStock ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                     `}
                     disabled={!variant.inStock}
@@ -120,7 +124,7 @@ const ProductPage = () => {
             <div className="mb-8">
               <h3 className="text-sm font-medium text-gray-900 mb-2">Quantity:</h3>
               <div className="flex items-center">
-                <button 
+                <button
                   onClick={() => handleQuantityChange(quantity - 1)}
                   disabled={quantity <= 1}
                   className="p-2 border border-gray-300 rounded-l-md text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -135,7 +139,7 @@ const ProductPage = () => {
                   onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
                   className="w-16 text-center p-2 border-y border-gray-300 focus:outline-none"
                 />
-                <button 
+                <button
                   onClick={() => handleQuantityChange(quantity + 1)}
                   disabled={quantity >= 10}
                   className="p-2 border border-gray-300 rounded-r-md text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -153,9 +157,11 @@ const ProductPage = () => {
                 className={`
                   flex-1 flex items-center justify-center space-x-2
                   py-3 px-8 rounded-md font-medium text-white transition-all duration-200
-                  ${selectedVariant.inStock 
-                    ? 'bg-gray-800 hover:bg-gray-900 shadow-md hover:shadow-lg' 
-                    : 'bg-gray-400 cursor-not-allowed'}
+                  ${
+                    selectedVariant.inStock
+                      ? 'bg-gray-800 hover:bg-gray-900 shadow-md hover:shadow-lg'
+                      : 'bg-gray-400 cursor-not-allowed'
+                  }
                 `}
               >
                 <ShoppingCart size={20} />
@@ -168,9 +174,11 @@ const ProductPage = () => {
                 className={`
                   flex-1 flex items-center justify-center space-x-2
                   py-3 px-8 rounded-md font-medium text-white transition-all duration-200
-                  ${selectedVariant.inStock 
-                    ? 'bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg' 
-                    : 'bg-gray-400 cursor-not-allowed'}
+                  ${
+                    selectedVariant.inStock
+                      ? 'bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg'
+                      : 'bg-gray-400 cursor-not-allowed'
+                  }
                 `}
               >
                 <ShoppingBag size={20} />
