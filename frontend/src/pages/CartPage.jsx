@@ -13,7 +13,9 @@ const CartPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900 mb-4">Your Cart is Empty</h1>
-            <p className="text-gray-600 mb-8">Add some products to your cart and they will show up here</p>
+            <p className="text-gray-600 mb-8">
+              Add some products to your cart and they will show up here
+            </p>
             <Link
               to="/"
               className="inline-block bg-blue-600 text-white px-6 py-3 rounded-md font-medium hover:bg-blue-700 transition-colors duration-200"
@@ -73,7 +75,9 @@ const CartPage = () => {
                     </div>
                     <div className="flex items-center mt-4">
                       <button
-                        onClick={() => handleQuantityChange(item.product.id, item.variant.id, item.quantity - 1)}
+                        onClick={() =>
+                          handleQuantityChange(item.product.id, item.variant.id, item.quantity - 1)
+                        }
                         disabled={item.quantity <= 1}
                         className="p-1 border border-gray-300 rounded-l-md text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
@@ -84,11 +88,19 @@ const CartPage = () => {
                         min="1"
                         max="10"
                         value={item.quantity}
-                        onChange={(e) => handleQuantityChange(item.product.id, item.variant.id, parseInt(e.target.value) || 1)}
+                        onChange={(e) =>
+                          handleQuantityChange(
+                            item.product.id,
+                            item.variant.id,
+                            parseInt(e.target.value) || 1
+                          )
+                        }
                         className="w-16 text-center p-1 border-y border-gray-300 focus:outline-none"
                       />
                       <button
-                        onClick={() => handleQuantityChange(item.product.id, item.variant.id, item.quantity + 1)}
+                        onClick={() =>
+                          handleQuantityChange(item.product.id, item.variant.id, item.quantity + 1)
+                        }
                         disabled={item.quantity >= 10}
                         className="p-1 border border-gray-300 rounded-r-md text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
