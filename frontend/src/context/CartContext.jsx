@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 const CartContext = createContext();
 
@@ -9,12 +9,12 @@ export const CartProvider = ({ children }) => {
     items: [],
     orderSummary: null,
     orderResult: null,
-    customerInfo: null
+    customerInfo: null,
   });
 
   const addToCart = (product, variant, quantity) => {
     const existingItemIndex = cart.items.findIndex(
-      item => item.product.id === product.id && item.variant.id === variant.id
+      (item) => item.product.id === product.id && item.variant.id === variant.id
     );
 
     let newItems;
@@ -39,22 +39,22 @@ export const CartProvider = ({ children }) => {
         subtotal,
         tax,
         shipping,
-        total
-      }
+        total,
+      },
     });
   };
 
   const calculateSubtotal = (items) => {
-    return items.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+    return items.reduce((total, item) => total + item.product.price * item.quantity, 0);
   };
 
   const calculateTotalItems = (items) => {
     return items.reduce((total, item) => total + (total + item.quantity), 0);
-  }
+  };
 
   const removeFromCart = (productId, variantId) => {
     const newItems = cart.items.filter(
-      item => !(item.product.id === productId && item.variant.id === variantId)
+      (item) => !(item.product.id === productId && item.variant.id === variantId)
     );
 
     if (newItems.length === 0) {
@@ -62,7 +62,7 @@ export const CartProvider = ({ children }) => {
         items: [],
         orderSummary: null,
         orderResult: null,
-        customerInfo: null
+        customerInfo: null,
       });
       return;
     }
@@ -79,13 +79,13 @@ export const CartProvider = ({ children }) => {
         subtotal,
         tax,
         shipping,
-        total
-      }
+        total,
+      },
     });
   };
 
   const updateQuantity = (productId, variantId, quantity) => {
-    const newItems = cart.items.map(item => {
+    const newItems = cart.items.map((item) => {
       if (item.product.id === productId && item.variant.id === variantId) {
         return { ...item, quantity };
       }
@@ -106,23 +106,23 @@ export const CartProvider = ({ children }) => {
         subtotal,
         tax,
         shipping,
-        total
-      }
+        total,
+      },
     });
   };
 
   const setOrderResult = (result) => {
-    setCart({
-      ...cart,
-      orderResult: result
-    });
+    setCart((prevCart) => ({
+      ...prevCart,
+      orderResult: result,
+    }));
   };
 
   const setCustomerInfo = (info) => {
-    setCart({
-      ...cart,
-      customerInfo: info
-    });
+    setCart((prevCart) => ({
+      ...prevCart,
+      customerInfo: info,
+    }));
   };
 
   const clearCart = () => {
@@ -130,20 +130,20 @@ export const CartProvider = ({ children }) => {
       items: [],
       orderSummary: null,
       orderResult: null,
-      customerInfo: null
+      customerInfo: null,
     });
   };
 
   return (
-    <CartContext.Provider 
-      value={{ 
-        cart, 
-        addToCart, 
+    <CartContext.Provider
+      value={{
+        cart,
+        addToCart,
         removeFromCart,
-        updateQuantity, 
+        updateQuantity,
         setOrderResult,
         setCustomerInfo,
-        clearCart
+        clearCart,
       }}
     >
       {children}
