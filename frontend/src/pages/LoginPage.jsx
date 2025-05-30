@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+
 import FormField from '../components/FormField';
 import { validateEmail } from '../utils/validators';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
   });
 
   const [errors, setErrors] = useState({});
@@ -15,13 +15,13 @@ const LoginPage = () => {
     const { id, value } = e.target;
     setFormData({
       ...formData,
-      [id]: value
+      [id]: value,
     });
-    
+
     if (errors[id]) {
       setErrors({
         ...errors,
-        [id]: ''
+        [id]: '',
       });
     }
   };
@@ -45,11 +45,11 @@ const LoginPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     // Mock login success - would normally call API
     alert('This is a mock login. In a real application, authentication would happen here.');
   };
@@ -60,11 +60,9 @@ const LoginPage = () => {
         <div className="bg-white p-8 rounded-lg shadow-md">
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-gray-900">Sign In</h1>
-            <p className="text-gray-600 mt-2">
-              Enter your credentials to access your account
-            </p>
+            <p className="text-gray-600 mt-2">Enter your credentials to access your account</p>
           </div>
-          
+
           <form onSubmit={handleSubmit}>
             <FormField
               label="Email"
@@ -76,7 +74,7 @@ const LoginPage = () => {
               error={errors.email}
               required
             />
-            
+
             <FormField
               label="Password"
               id="password"
@@ -87,7 +85,7 @@ const LoginPage = () => {
               error={errors.password}
               required
             />
-            
+
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center">
                 <input
@@ -100,14 +98,14 @@ const LoginPage = () => {
                   Remember me
                 </label>
               </div>
-              
+
               <div className="text-sm">
                 <a href="#" className="text-blue-600 hover:text-blue-800">
                   Forgot password?
                 </a>
               </div>
             </div>
-            
+
             <button
               type="submit"
               className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md shadow-md hover:shadow-lg transition-all duration-200"
@@ -115,7 +113,7 @@ const LoginPage = () => {
               Login In
             </button>
           </form>
-          
+
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Don't have an account?{' '}
