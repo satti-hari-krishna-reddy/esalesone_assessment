@@ -3,11 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { formatCurrency } from '../utils/formatters';
 import FormField from '../components/FormField';
-import { simulateTransaction } from '../mocks/productData';
-import { 
-  formatCardNumber, 
-  formatExpiryDate 
-} from '../utils/formatters';
+import { formatCardNumber, formatExpiryDate } from '../utils/formatters';
 import {
   validateEmail,
   validatePhone,
@@ -15,14 +11,13 @@ import {
   validateExpiry,
   validateCVV,
   validateZip,
-  validateRequired
+  validateRequired,
 } from '../utils/validators';
 
-const CheckoutPage = () => {
+const CheckoutPage = ({ backendUrl }) => {
   const navigate = useNavigate();
   const { cart, setOrderResult, setCustomerInfo } = useCart();
   const itemCount = parseInt(cart.items.reduce((total, item) => total + item.quantity, 0));
-
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -34,17 +29,16 @@ const CheckoutPage = () => {
     zipCode: '',
     cardNumber: '',
     expiryDate: '',
-    cvv: ''
+    cvv: '',
   });
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [transactionType, setTransactionType] = useState('approved');
   const [apiError, setApiError] = useState('');
-  const [isCheckingCart, setIsCheckingCart] = useState(true); 
+  const [isCheckingCart, setIsCheckingCart] = useState(true);
 
-
-    useEffect(() => {
+  useEffect(() => {
     if (!cart || cart.items.length < 1) {
       navigate('/');
     } else {
@@ -56,24 +50,24 @@ const CheckoutPage = () => {
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
-    
+
     let formattedValue = value;
     if (id === 'cardNumber') {
       formattedValue = formatCardNumber(value);
     } else if (id === 'expiryDate') {
       formattedValue = formatExpiryDate(value);
     }
-    
+
     setFormData({
       ...formData,
-      [id]: formattedValue
+      [id]: formattedValue,
     });
-    
+
     // Clear error for this field when user is typing
     if (errors[id]) {
       setErrors({
         ...errors,
-        [id]: ''
+        [id]: '',
       });
     }
   };
@@ -82,7 +76,18 @@ const CheckoutPage = () => {
     const newErrors = {};
 
     // Required fields
-    ['fullName', 'email', 'phone', 'address', 'city', 'state', 'zipCode', 'cardNumber', 'expiryDate', 'cvv'].forEach(field => {
+    [
+      'fullName',
+      'email',
+      'phone',
+      'address',
+      'city',
+      'state',
+      'zipCode',
+      'cardNumber',
+      'expiryDate',
+      'cvv',
+    ].forEach((field) => {
       if (!validateRequired(formData[field])) {
         newErrors[field] = 'This field is required';
       }
@@ -122,24 +127,51 @@ const CheckoutPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    setApiError('');
-    
-    if (!validateForm()) {
-      return;
-    }
-    
+  const handleSubmitCheckout = async () => {
     setIsSubmitting(true);
-    
+    setApiError('');
+
+    const payload = {
+      customerInfo: {
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        address: formData.address,
+        city: formData.city,
+        state: formData.state,
+        zipCode: formData.zipCode,
+      },
+      items: cart.items.map((item) => ({
+        productId: item.product._id,
+        name: item.product.name,
+        variant: item.product.variant,
+        quantity: item.quantity,
+        price: item.product.price,
+      })),
+      totalAmount: cart.orderSummary.total,
+      transactionStatus: transactionType,
+    };
+
     try {
-      const result = await simulateTransaction(formData, transactionType);
+      const response = await fetch(`${backendUrl}/api/v1/checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Checkout failed');
+      }
+
+      const result = await response.json();
+      // save or show confirmation
       setOrderResult(result);
       setCustomerInfo(formData);
       navigate('/thank-you');
     } catch (error) {
       setApiError(error.message);
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -151,7 +183,7 @@ const CheckoutPage = () => {
 
         <div className="flex flex-col lg:flex-row lg:gap-8">
           <div className="lg:w-2/3">
-            <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md mb-6">
+            <div className="bg-white p-6 rounded-lg shadow-md mb-6">
               <h2 className="text-xl font-semibold mb-4">Contact Information</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
@@ -264,7 +296,6 @@ const CheckoutPage = () => {
                 />
               </div>
 
-           
               <div className="mt-8 mb-6 p-4 bg-gray-50 rounded-md border border-gray-200">
                 <h3 className="text-sm font-medium text-gray-700 mb-3">Transaction Simulation</h3>
                 <div className="flex flex-wrap gap-3">
@@ -314,21 +345,21 @@ const CheckoutPage = () => {
               )}
 
               <button
-                type="submit"
+                onClick={handleSubmitCheckout}
                 disabled={isSubmitting}
                 className={`w-full py-3 px-4 rounded-md font-medium text-white transition-all duration-200 ${
-                  isSubmitting 
-                    ? 'bg-gray-400 cursor-not-allowed' 
+                  isSubmitting
+                    ? 'bg-gray-400 cursor-not-allowed'
                     : 'bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg'
                 }`}
               >
                 {isSubmitting ? 'Processing...' : 'Complete Purchase'}
               </button>
-            </form>
+            </div>
           </div>
 
           {/* Order Summary */}
-       <div className="lg:w-1/3">
+          <div className="lg:w-1/3">
             <div className="bg-white rounded-lg shadow-md p-6 mb-6">
               {cart.items.map((item) => (
                 <div
@@ -349,21 +380,19 @@ const CheckoutPage = () => {
                           {formatCurrency(item.product.price)}
                         </p>
                       </div>
-
                     </div>
                     <div className="flex items-center mt-4">
                       <span>Quantity: {parseInt(item.quantity) || 1}</span>
-   
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-    
-          <div className="bg-white rounded-lg shadow-md p-6">
+
+            <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
               <div className="space-y-2">
-                                <div className="flex justify-between">
+                <div className="flex justify-between">
                   <span className="text-gray-600">Total Items</span>
                   <span>{itemCount}</span>
                 </div>
@@ -384,9 +413,8 @@ const CheckoutPage = () => {
                   <span className="text-blue-600">{formatCurrency(cart.orderSummary.total)}</span>
                 </div>
               </div>
-
             </div>
-            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -394,10 +422,3 @@ const CheckoutPage = () => {
 };
 
 export default CheckoutPage;
-
-
-
-
-
-
-
