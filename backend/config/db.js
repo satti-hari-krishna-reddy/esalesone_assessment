@@ -12,11 +12,11 @@ async function connectDB() {
     try {
       await mongoose.connect(MONGO_URI);
       console.log('[INFO] MongoDB connected');
-      break; 
+      break;
     } catch (err) {
       console.log('[ERROR] MongoDB connection failed:', err.message);
       console.log(`[INFO] Retrying in ${RETRY_INTERVAL / 1000}s...`);
-      await new Promise(resolve => setTimeout(resolve, RETRY_INTERVAL));
+      await new Promise((resolve) => setTimeout(resolve, RETRY_INTERVAL));
     }
   }
 }
