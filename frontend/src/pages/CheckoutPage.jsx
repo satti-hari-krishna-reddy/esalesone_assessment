@@ -128,6 +128,8 @@ const CheckoutPage = ({ backendUrl }) => {
   };
 
   const handleSubmitCheckout = async () => {
+    if (!validateForm()) return;
+
     setIsSubmitting(true);
     setApiError('');
 
